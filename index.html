@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GFiber Sales Academy | Ready to Sell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g-blue:#4285F4; --g-red:#EA4335; --g-yellow:#FBBC04; --g-green:#34A853;
+  --ink:#202124; --ink-soft:#5F6368; --paper:#FFFFFF; --mist:#F1F3F4; --sky:#E8F0FE;
+  --radius:16px; --shadow:0 2px 12px rgba(32,33,36,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',Arial,sans-serif;color:var(--ink);background:var(--mist);line-height:1.55;}
+h1,h2,h3,h4,.display{font-family:'Outfit','Roboto',sans-serif;}
+button{font-family:'Outfit','Roboto',sans-serif;cursor:pointer;border:none;}
+
+/* ---------- Fiber progress strand (signature element) ---------- */
+.fiberbar{position:fixed;top:0;left:0;right:0;height:6px;background:#DADCE0;z-index:60;}
+.fiberbar .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--g-blue),var(--g-green));transition:width .6s ease;position:relative;}
+.fiberbar .pulse{position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,#fff 0 30%,var(--g-blue) 70%);box-shadow:0 0 10px 3px rgba(66,133,244,.7);animation:glow 1.4s ease-in-out infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 8px 2px rgba(66,133,244,.55)}50%{box-shadow:0 0 16px 6px rgba(66,133,244,.85)}}
+
+/* ---------- Layout ---------- */
+.app{display:flex;min-height:100vh;padding-top:6px;}
+.side{width:280px;background:var(--paper);border-right:1px solid #DADCE0;padding:22px 16px;position:sticky;top:6px;height:calc(100vh - 6px);overflow-y:auto;flex-shrink:0;}
+.main{flex:1;padding:34px clamp(16px,4vw,56px);max-width:1000px;margin:0 auto;}
+.wordmark{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.wordmark .dots{display:flex;gap:3px;}
+.wordmark .dots span{width:9px;height:9px;border-radius:50%;}
+.wordmark .dots span:nth-child(1){background:var(--g-blue)}
+.wordmark .dots span:nth-child(2){background:var(--g-red)}
+.wordmark .dots span:nth-child(3){background:var(--g-yellow)}
+.wordmark .dots span:nth-child(4){background:var(--g-green)}
+.wordmark b{font-family:'Outfit';font-size:24px;font-weight:700;letter-spacing:-.5px;}
+.side .tag{font-size:12px;color:var(--ink-soft);margin-bottom:20px;display:block;}
+.navmod{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;padding:11px 10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-soft);margin-bottom:4px;}
+.navmod:hover{background:var(--mist)}
+.navmod.active{background:var(--sky);color:var(--g-blue);}
+.navmod.done .dot{background:var(--g-green);color:#fff;}
+.navmod .dot{width:24px;height:24px;border-radius:50%;background:#DADCE0;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700;}
+.navmod.active .dot{background:var(--g-blue);color:#fff;}
+.navmod.locked{opacity:.45;cursor:not-allowed;}
+.menu-toggle{display:none;}
+
+/* ---------- Slides ---------- */
+.slide{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(24px,4vw,44px);animation:rise .45s ease;}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g-blue);margin-bottom:8px;font-family:'Outfit';}
+.slide h2{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.5px;margin-bottom:14px;}
+.slide p{color:var(--ink-soft);margin-bottom:14px;max-width:64ch;}
+.slide p b, .slide li b{color:var(--ink);}
+.slide ul{margin:0 0 14px 20px;color:var(--ink-soft);}
+.slide li{margin-bottom:8px;}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-top:26px;gap:12px;}
+.btn{padding:12px 26px;border-radius:999px;font-size:15px;font-weight:700;transition:transform .12s ease, box-shadow .12s ease;}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--g-blue);color:#fff;box-shadow:0 3px 10px rgba(66,133,244,.35);}
+.btn.primary:disabled{background:#BDC1C6;box-shadow:none;cursor:not-allowed;}
+.btn.ghost{background:var(--mist);color:var(--ink);}
+.crumb{font-size:13px;color:var(--ink-soft);font-weight:600;}
+
+/* ---------- Hero ---------- */
+.hero{text-align:center;padding:clamp(30px,6vw,60px) 20px;}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:800;letter-spacing:-1.5px;line-height:1.08;margin:18px 0 12px;}
+.hero h1 .hl{background:linear-gradient(90deg,var(--g-blue),var(--g-green));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero .sub{font-size:clamp(15px,2vw,18px);color:var(--ink-soft);max-width:54ch;margin:0 auto 26px;}
+.daymap{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:26px 0 30px;}
+.daypill{background:var(--paper);border:2px solid var(--mist);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:600;color:var(--ink-soft);width:138px;}
+.daypill b{display:block;font-family:'Outfit';font-size:15px;color:var(--ink);margin-bottom:2px;}
+.daypill:nth-child(1){border-top:4px solid var(--g-blue)}
+.daypill:nth-child(2){border-top:4px solid var(--g-red)}
+.daypill:nth-child(3){border-top:4px solid var(--g-yellow)}
+.daypill:nth-child(4){border-top:4px solid var(--g-green)}
+.daypill:nth-child(5){border-top:4px solid var(--g-blue)}
+
+/* ---------- Gigi the mascot ---------- */
+.gigi{display:inline-block;animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.gigi .arm-wave{transform-origin:38px 66px;animation:wave 2.2s ease-in-out infinite;}
+@keyframes wave{0%,55%,100%{transform:rotate(0)}65%{transform:rotate(-26deg)}75%{transform:rotate(10deg)}85%{transform:rotate(-22deg)}}
+.gigi .eye{animation:blink 4.4s infinite;}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+.speech{display:flex;align-items:flex-end;gap:14px;margin:18px 0;}
+.speech .bubble{background:var(--sky);border-radius:18px 18px 18px 4px;padding:14px 18px;font-size:15px;color:var(--ink);max-width:52ch;text-align:left;}
+.speech .bubble b{color:var(--g-blue)}
+
+/* ---------- Cards / games ---------- */
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:18px 0;}
+.flip{perspective:900px;cursor:pointer;height:150px;}
+.flip .inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flip.flipped .inner{transform:rotateY(180deg);}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;font-weight:600;font-size:14px;}
+.flip .front{background:var(--paper);border:2px solid #DADCE0;color:var(--ink);}
+.flip .back{transform:rotateY(180deg);color:#fff;font-size:13px;font-weight:500;line-height:1.4;}
+.flip .back.fact{background:var(--g-green);} .flip .back.myth{background:var(--g-red);}
+.flip .face .lbl{font-family:'Outfit';font-weight:800;font-size:15px;margin-bottom:6px;display:block;}
+
+.planrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0;}
+.plan{border:2px solid #DADCE0;border-radius:16px;padding:20px;background:var(--paper);transition:transform .15s;}
+.plan:hover{transform:translateY(-4px);}
+.plan h3{font-size:20px;margin-bottom:2px;}
+.plan .speed{font-family:'Outfit';font-weight:800;font-size:30px;letter-spacing:-1px;}
+.plan ul{margin:10px 0 0 18px;font-size:13.5px;}
+.plan.core{border-top:6px solid var(--g-blue)} .plan.home{border-top:6px solid var(--g-yellow)} .plan.edge{border-top:6px solid var(--g-green)}
+.plan .fit{margin-top:10px;font-size:12.5px;background:var(--mist);border-radius:8px;padding:8px 10px;color:var(--ink-soft);}
+
+.matchwrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0;}
+.matchcol h4{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:10px;}
+.mitem{border:2px solid #DADCE0;background:var(--paper);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:14px;cursor:pointer;width:100%;text-align:left;font-family:'Roboto';transition:border-color .15s;}
+.mitem.sel{border-color:var(--g-blue);background:var(--sky);}
+.mitem.ok{border-color:var(--g-green);background:#E6F4EA;cursor:default;}
+.mitem.bad{animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.mitem b{font-family:'Outfit';display:block;}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0;}
+.tab{padding:10px 18px;border-radius:999px;background:var(--mist);font-weight:700;font-size:14px;color:var(--ink-soft);}
+.tab.active.res{background:var(--g-blue);color:#fff;}
+.tab.active.mdu{background:var(--g-green);color:#fff;}
+.tab.active.biz{background:var(--g-yellow);color:var(--ink);}
+.chpanel{border:2px solid var(--mist);border-radius:16px;padding:22px;animation:rise .3s ease;}
+.chpanel h3{margin-bottom:8px;}
+.twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:14px;}
+.dolist,.dontlist{border-radius:12px;padding:14px 16px;font-size:14px;}
+.dolist{background:#E6F4EA;} .dontlist{background:#FCE8E6;}
+.dolist h5{color:var(--g-green);margin-bottom:6px;} .dontlist h5{color:var(--g-red);margin-bottom:6px;}
+.dolist ul,.dontlist ul{margin-left:18px;color:var(--ink);}
+
+/* ---------- Scenario ---------- */
+.scene{display:flex;gap:20px;align-items:flex-start;margin:18px 0;flex-wrap:wrap;}
+.scene .avatarbox{flex-shrink:0;text-align:center;font-size:13px;font-weight:700;color:var(--ink-soft);}
+.scene .convo{flex:1;min-width:260px;}
+.cust-line{background:var(--mist);border-radius:16px 16px 16px 4px;padding:14px 16px;font-size:15px;margin-bottom:14px;}
+.choice{display:block;width:100%;text-align:left;border:2px solid #DADCE0;background:var(--paper);border-radius:12px;padding:13px 15px;font-size:14px;margin-bottom:10px;font-family:'Roboto';transition:border-color .15s;}
+.choice:hover{border-color:var(--g-blue);}
+.feedback{border-radius:12px;padding:13px 15px;font-size:14px;margin:10px 0;animation:rise .3s;}
+.feedback.good{background:#E6F4EA;border-left:4px solid var(--g-green);}
+.feedback.bad{background:#FCE8E6;border-left:4px solid var(--g-red);}
+.moodwrap{margin-bottom:14px;}
+.moodwrap .lbl{font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase;}
+.moodbar{height:10px;background:#DADCE0;border-radius:999px;overflow:hidden;margin-top:5px;}
+.moodbar .mfill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--g-red),var(--g-yellow),var(--g-green));transition:width .5s;}
+.avatar .mouth{transition:d .3s;}
+
+/* ---------- Checklist ---------- */
+.check{display:flex;align-items:flex-start;gap:12px;border:2px solid var(--mist);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;background:var(--paper);width:100%;text-align:left;font-family:'Roboto';}
+.check .box{width:22px;height:22px;border:2px solid #BDC1C6;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;margin-top:2px;}
+.check.on{border-color:var(--g-green);background:#F4FBF6;}
+.check.on .box{background:var(--g-green);border-color:var(--g-green);}
+.check .t b{font-family:'Outfit';display:block;font-size:14.5px;}
+.check .t span{font-size:13px;color:var(--ink-soft);}
+
+/* ---------- Quiz ---------- */
+.qcard{margin-bottom:8px;}
+.qnum{font-size:12px;font-weight:800;color:var(--g-blue);letter-spacing:.1em;font-family:'Outfit';}
+.qtext{font-size:17px;font-weight:700;font-family:'Outfit';margin:6px 0 14px;}
+.qopt{display:block;width:100%;text-align:left;border:2px solid #DADCE0;background:var(--paper);border-radius:12px;padding:13px 15px;font-size:14.5px;margin-bottom:10px;font-family:'Roboto';}
+.qopt:hover{border-color:var(--g-blue);}
+.qopt.right{border-color:var(--g-green);background:#E6F4EA;}
+.qopt.wrong{border-color:var(--g-red);background:#FCE8E6;}
+.qbar{display:flex;gap:5px;margin-bottom:18px;}
+.qbar i{flex:1;height:6px;border-radius:99px;background:#DADCE0;}
+.qbar i.hit{background:var(--g-green);} .qbar i.miss{background:var(--g-red);} .qbar i.cur{background:var(--g-blue);}
+
+/* ---------- Badge / confetti ---------- */
+.badgewrap{text-align:center;padding:24px 0;}
+.badge{width:190px;height:190px;margin:0 auto 18px;position:relative;animation:pop .6s cubic-bezier(.2,1.6,.4,1);}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.score-big{font-family:'Outfit';font-weight:800;font-size:46px;letter-spacing:-2px;}
+.confetti{position:fixed;top:-12px;border-radius:3px;width:10px;height:14px;z-index:99;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(105vh) rotate(640deg);opacity:.2}}
+
+.note{font-size:12px;color:var(--ink-soft);text-align:center;padding:20px;}
+.statline{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0;}
+.stat{background:var(--mist);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--ink-soft);}
+.stat b{font-family:'Outfit';font-size:20px;color:var(--ink);display:block;}
+
+@media(max-width:880px){
+  .side{position:fixed;left:-300px;transition:left .25s;z-index:70;box-shadow:0 0 30px rgba(0,0,0,.18);}
+  .side.open{left:0;}
+  .menu-toggle{display:flex;position:fixed;bottom:18px;left:18px;z-index:80;background:var(--ink);color:#fff;border-radius:999px;padding:13px 20px;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.3);align-items:center;gap:8px;}
+  .matchwrap{grid-template-columns:1fr;}
+  .main{padding:22px 14px 90px;}
+}
+</style>
+</head>
+<body>
+<div class="fiberbar"><div class="fill" id="fiberfill"><div class="pulse"></div></div></div>
+
+<div class="app">
+  <nav class="side" id="sidenav">
+    <div class="wordmark"><span class="dots"><span></span><span></span><span></span><span></span></span><b>GFiber</b></div>
+    <span class="tag">Sales Academy &middot; Ready to Sell</span>
+    <div id="navlist"></div>
+  </nav>
+  <main class="main" id="stage"></main>
+</div>
+<button class="menu-toggle" id="menubtn">&#9776; Modules</button>
+
+<script>
+/* ============================================================
+   GFiber Sales Academy: "Ready to Sell" New Hire Onboarding
+   Demo training concept by Naya Roquemore (not an official GFiber product)
+   ============================================================ */
+
+// ---------- SVG characters ----------
+function gigiSVG(size, line){
+  return `<div class="gigi"><svg width="${size}" height="${size}" viewBox="0 0 110 110" role="img" aria-label="Gigi the GFiber mascot">
+    <path d="M55 8 C30 8 18 28 18 50 C18 76 34 96 55 102 C76 96 92 76 92 50 C92 28 80 8 55 8 Z" fill="#4285F4"/>
+    <path d="M55 14 C34 14 24 31 24 50 C24 72 38 90 55 95 C72 90 86 72 86 50 C86 31 76 14 55 14 Z" fill="#5A95F5"/>
+    <polyline points="30,58 44,50 52,62 64,46 80,54" fill="none" stroke="#FBBC04" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="eye"><circle cx="42" cy="36" r="6.5" fill="#fff"/><circle cx="43.5" cy="37" r="3" fill="#202124"/></g>
+    <g class="eye"><circle cx="68" cy="36" r="6.5" fill="#fff"/><circle cx="69.5" cy="37" r="3" fill="#202124"/></g>
+    <path d="M46 72 Q55 80 64 72" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <g class="arm-wave"><path d="M38 66 Q20 60 14 44" fill="none" stroke="#4285F4" stroke-width="9" stroke-linecap="round"/><circle cx="13" cy="42" r="7" fill="#FBBC04"/></g>
+    <path d="M74 68 Q88 74 92 86" fill="none" stroke="#4285F4" stroke-width="9" stroke-linecap="round"/>
+    ${line?'':''}
+  </svg></div>`;
+}
+function gigiSays(text){
+  return `<div class="speech">${gigiSVG(86)}<div class="bubble">${text}</div></div>`;
+}
+// Customer avatar with mood (0 upset .. 2 happy)
+function avatarSVG(mood, color){
+  const mouths=["M40 72 Q52 64 64 72","M40 71 L64 71","M40 68 Q52 78 64 68"];
+  const brows = mood===0 ? '<path d="M34 36 L46 40" stroke="#202124" stroke-width="3" stroke-linecap="round"/><path d="M70 36 L58 40" stroke="#202124" stroke-width="3" stroke-linecap="round"/>' : '';
+  return `<svg class="avatar" width="96" height="96" viewBox="0 0 104 104" role="img" aria-label="Customer">
+    <circle cx="52" cy="52" r="48" fill="${color}"/>
+    <circle cx="52" cy="44" r="26" fill="#F8D8C0"/>
+    <path d="M28 42 C28 24 40 16 52 16 C64 16 76 24 76 42 L72 40 C70 28 62 24 52 24 C42 24 34 28 30 40 Z" fill="#3B2B20"/>
+    <g class="eye"><circle cx="44" cy="46" r="3.4" fill="#202124"/></g>
+    <g class="eye"><circle cx="60" cy="46" r="3.4" fill="#202124"/></g>
+    ${brows}
+    <path class="mouth" d="${mouths[mood]}" transform="translate(0,-6) scale(.8) translate(12,14)" fill="none" stroke="#9C4A2F" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M22 100 C26 80 38 74 52 74 C66 74 78 80 82 100 Z" fill="#34A853"/>
+  </svg>`;
+}
+
+// ---------- App state (in-memory) ----------
+const S = { mod:0, slide:0, completed:[], quiz:{i:0,score:0,answers:[]}, mood:1, scStep:0, scDone:false };
+
+// ---------- Module + slide content ----------
+const MODULES = [
+ {short:"Welcome", title:"Welcome to GFiber", slides:[
+  {type:"hero"},
+  {type:"content", eyebrow:"Module 1 · Who we are", h:"An Alphabet company on a mission", body:`
+    ${gigiSays("Hi, I'm <b>Gigi</b>, your guide through the Academy. I'm a gig of pure fiber light, and I move fast. Try to keep up!")}
+    <p><b>GFiber</b> is an Alphabet company that brings Google Fiber and Google Fiber Webpass internet to homes and businesses across the United States. We launched in 2012 in Kansas City to prove what communities could do with truly fast internet, and we've been expanding to new cities ever since.</p>
+    <p>Our personality in three words: <b>fast, easy, and always looking ahead.</b> Everything you say to a customer should sound like those three words.</p>
+    <ul>
+      <li><b>Fast:</b> symmetrical multi-gig speeds on a fiber-to-the-home network.</li>
+      <li><b>Easy:</b> no contracts, no data caps, no hidden equipment or install fees.</li>
+      <li><b>Ahead:</b> the network keeps getting upgraded so customers never have to think about it.</li>
+    </ul>`},
+  {type:"content", eyebrow:"Module 1 · Fiber 101", h:"Why fiber beats the alternatives", body:`
+    <p>You will hear "internet is internet" at doors and in lobbies. It isn't, and here's the 20-second version you'll use constantly:</p>
+    <ul>
+      <li><b>Fiber sends data as light through glass.</b> Cable sends electrical signals through copper that was originally built for TV. Light travels farther, faster, and without the interference copper picks up.</li>
+      <li><b>Fiber is symmetrical.</b> Upload speed matches download speed. Cable uploads are typically a small fraction of the download number on the ad. That matters for video calls, cloud backups, gaming, and anyone working from home.</li>
+      <li><b>Fiber holds up at peak hours.</b> Less neighborhood congestion at 7 pm, when everyone is streaming.</li>
+    </ul>
+    ${gigiSays("Memory hook: <b>light through glass, same speed both ways.</b> If you remember nothing else from today, remember that.")}`},
+  {type:"mythfact"},
+ ]},
+ {short:"Product", title:"Know the Product", slides:[
+  {type:"content", eyebrow:"Module 2 · The lineup", h:"Three plans, one promise", body:`
+    <p>Every GFiber plan is symmetrical, has no data caps, no annual contracts, and includes equipment and professional installation. The base gigabit price hasn't changed since 2012, and customers love hearing that. Here's the lineup:</p>
+    <div class="planrow">
+      <div class="plan core"><h3>Core</h3><div class="speed">1 Gig</div>
+        <ul><li>Wi-Fi 6E router included, plus a mesh extender if needed</li><li>Effortless, premium gigabit internet</li></ul>
+        <div class="fit"><b>Fits:</b> streamers, browsers, everyday households</div></div>
+      <div class="plan home"><h3>Home</h3><div class="speed">3 Gig</div>
+        <ul><li>Wi-Fi 7 router included, plus extenders as needed</li><li>In-home consult and hard wiring of high-use areas where eligible</li></ul>
+        <div class="fit"><b>Fits:</b> busy households working, learning, and gaming at once</div></div>
+      <div class="plan edge"><h3>Edge</h3><div class="speed">8 Gig</div>
+        <ul><li>Wi-Fi 7 router with 10G port, extenders as needed</li><li>Battery backup for up to 2 hours of power loss</li></ul>
+        <div class="fit"><b>Fits:</b> creators, power users, smart-home maximalists</div></div>
+    </div>
+    <p style="font-size:13px">Always confirm current pricing and availability in your market tools before quoting a customer.</p>`},
+  {type:"content", eyebrow:"Module 2 · The promise", h:"What every customer gets", body:`
+    <ul>
+      <li><b>No annual contracts.</b> Customers stay because they want to.</li>
+      <li><b>No data caps.</b> Stream, upload, and back up without watching a meter.</li>
+      <li><b>Equipment and installation included.</b> No surprise fees on the first bill.</li>
+      <li><b>Reliability we stand behind.</b> 99.9%+ uptime, with a 25% refund on the month's bill if service is down for more than 45 minutes.</li>
+      <li><b>Consistent pricing.</b> New and existing customers pay the same. No promo cliffs.</li>
+    </ul>
+    ${gigiSays("Sell the <b>benefit</b>, not the spec. Nobody dreams about 8 gigs. They dream about a video call that never freezes during the big pitch.")}
+    <p><b>Spec → benefit translation:</b> "Symmetrical 1 gig" becomes "your uploads are as fast as your downloads, so backing up your phone or sharing files takes seconds." "Wi-Fi 7 router included" becomes "you get our best router free, no rental fee, ever."</p>`},
+  {type:"match"},
+ ]},
+ {short:"Channels", title:"Know Your Channel", slides:[
+  {type:"channels"},
+ ]},
+ {short:"Conversation", title:"The Sales Conversation", slides:[
+  {type:"content", eyebrow:"Module 4 · The arc", h:"Five beats of every great sale", body:`
+    <p>Every GFiber conversation, at a door or in a leasing office, follows the same arc:</p>
+    <ul>
+      <li><b>1. Open:</b> friendly, local, ten seconds. "Hi, I'm with GFiber, we just finished construction on your street."</li>
+      <li><b>2. Discover:</b> ask before you pitch. Who's in the home? What breaks? What do they pay?</li>
+      <li><b>3. Pitch:</b> match one plan to what you heard. One plan, not a menu.</li>
+      <li><b>4. Handle objections:</b> acknowledge, answer, advance. Never argue.</li>
+      <li><b>5. Close:</b> ask for the install date, not for permission. "Mornings or afternoons better for you?"</li>
+    </ul>
+    <p><b>Discovery questions that work:</b> "How many people are streaming or on calls at the same time?" &middot; "What's the most frustrating thing about your current internet?" &middot; "Do you know what you're actually paying after fees?"</p>`},
+  {type:"flash"},
+  {type:"scenario"},
+ ]},
+ {short:"Tools", title:"Tools & Process", slides:[
+  {type:"content", eyebrow:"Module 5 · Pipeline", h:"From knock to closed-won", body:`
+    <p>A sale isn't done when the customer says yes. It's done when the install is complete and the CRM tells the truth. Your pipeline:</p>
+    <ul>
+      <li><b>Prospect</b> → logged in the CRM with address and notes, same day, every time.</li>
+      <li><b>Engaged</b> → conversation happened; record objections and follow-up date.</li>
+      <li><b>Committed</b> → plan selected, install scheduled while you're still with the customer.</li>
+      <li><b>Installed</b> → handoff to the customer experience team; confirm the customer knows what happens on install day.</li>
+    </ul>
+    ${gigiSays("A lead that isn't in the CRM <b>doesn't exist</b>. Your follow-ups, your commissions, and your team's forecasts all start with clean data.")}
+    <p><b>CRM hygiene rules:</b> update conversion status before you leave the street; write notes a teammate could pick up cold; never schedule an install verbally without logging it.</p>`},
+  {type:"checklist"},
+ ]},
+ {short:"Certify", title:"Certification", slides:[
+  {type:"quizintro"},
+  {type:"quiz"},
+ ]},
+];
+
+// ---------- Interactive data ----------
+const MYTHS=[
+ {q:"Fiber sends data as light through glass.", a:true, why:"Fact. That's why it's faster and cleaner than electrical signals over copper."},
+ {q:"GFiber requires a 12-month contract.", a:false, why:"Myth. No annual contracts on any plan. Customers stay because they want to."},
+ {q:"Upload speeds match download speeds on GFiber.", a:true, why:"Fact. Symmetrical speeds are one of fiber's biggest edges over cable."},
+ {q:"GFiber charges extra for the router.", a:false, why:"Myth. Equipment is included. Home and Edge even include Wi-Fi 7 routers and extenders."},
+ {q:"GFiber has data caps on its base plan.", a:false, why:"Myth. No data caps on any plan, period."},
+ {q:"GFiber's base gigabit price has held steady since 2012.", a:true, why:"Fact. Same price since 2012. Customers burned by promo pricing love this."},
+];
+const MATCH={
+ customers:[
+  {id:"c1", t:"The Riveras", d:"Two parents on video calls, three kids gaming and streaming, smart doorbell, the works."},
+  {id:"c2", t:"Dee", d:"Lives alone, streams shows at night, browses, video-chats family on Sundays."},
+  {id:"c3", t:"Marcus", d:"Edits and uploads 4K video for clients from a home studio. Downtime costs him money."},
+  {id:"c4", t:"Priya", d:"Runs a five-person design studio from a small office and is tired of upload bottlenecks."},
+ ],
+ plans:[
+  {id:"p1", t:"Home 3 Gig", fit:"c1"},
+  {id:"p2", t:"Core 1 Gig", fit:"c2"},
+  {id:"p3", t:"Edge 8 Gig", fit:"c3"},
+  {id:"p4", t:"Small business solution", fit:"c4"},
+ ]
+};
+const CHANNELS=[
+ {key:"res", cls:"res", name:"Residential Door-to-Door", who:"Homeowners and renters in neighborhoods where GFiber construction is finished.",
+  care:"They care about reliability at peak hours, honest pricing with no promo cliffs, and a painless install. Trust is everything; you're a guest on their porch.",
+  dos:["Lead with the local angle: construction just finished on their street","Ask discovery questions before pitching","Leave a door hanger if no answer, and log the address","Respect posted no-soliciting signs and local permit rules"],
+  donts:["Knock outside permitted hours for your market","Trash-talk the competitor by name; beat them on facts","Quote pricing from memory if you're not certain","Linger after a clear no. Thank them and move on"]},
+ {key:"mdu", cls:"mdu", name:"MDU (Multi-Dwelling Unit)", who:"Apartment and condo residents, plus the property managers who control building access.",
+  care:"Residents want fast move-in activation. Property managers care about resident satisfaction, building reputation, and zero disruption. You serve both.",
+  dos:["Build the property manager relationship first; they're your multiplier","Coordinate events like lobby tables through management","Know your building's wiring status before talking to residents","Make move-in activation sound as easy as it is"],
+  donts:["Solicit door-to-door inside a building without permission","Promise building-wide timelines you can't verify","Bypass the leasing office, ever","Forget that one bad interaction can lock you out of 300 units"]},
+ {key:"biz", cls:"biz", name:"Small Business", who:"Owners and office managers of local businesses in GFiber service areas.",
+  care:"Uptime is revenue. They care about symmetrical uploads for cloud tools and point-of-sale reliability, and they make decisions on ROI, not vibes.",
+  dos:["Visit during slow hours, never the lunch rush","Talk in business outcomes: cloud backups, card readers, video calls","Ask what an hour of internet downtime costs them","Follow up by email with specifics; owners compare in writing"],
+  donts:["Pitch the owner like a residential customer","Interrupt them while they're serving customers","Guess at business plan details; confirm and follow up","Skip the CRM note because 'it was just a quick chat'"]},
+];
+const FLASH=[
+ {o:"\u201CIt's too expensive.\u201D", r:"\u201CTotally fair to ask. What are you paying now, after the fees and the equipment rental? Our price includes the router and install, and it's the same price next year. Most folks find the all-in number is closer than they thought, for a lot more speed.\u201D"},
+ {o:"\u201CI'm under contract.\u201D", r:"\u201CNo rush at all. When does it end? We don't have contracts, so you can line up an install the week yours expires and never sign another one. Can I leave my info and check back that month?\u201D"},
+ {o:"\u201CInternet is internet.\u201D", r:"\u201CI used to think so too. Quick question: does your video ever freeze on calls around 7 pm? That's the difference. Fiber is light through glass, uploads as fast as downloads, and it doesn't slow down when the whole street logs on.\u201D"},
+ {o:"\u201CInstalls are a hassle.\u201D", r:"\u201CHonestly, that's the part people end up bragging about. Professional install is included, our techs hard-wire your busiest rooms where eligible, and you pick the time window. No DIY kit unless you want one.\u201D"},
+ {o:"\u201CIs it even available here?\u201D", r:"\u201CGreat question, let me check your exact address right now. Construction just wrapped in this area, so a lot of neighbors don't realize they're eligible as of this month.\u201D"},
+];
+const SCENARIO=[
+ {cust:"\u201CLook, I'm happy with what I've got. It's like sixty bucks and it works fine.\u201D",
+  choices:[
+   {t:"\u201CSixty is a solid price. Is that the number on your bill after fees and the modem rental, or the one from the ad?\u201D", good:true,
+    fb:"Strong move. You acknowledged, then opened discovery on the real bill. Most customers haven't looked at the post-fee number in months."},
+   {t:"\u201CFine isn't fast. GFiber is 8 gigs. That's over 100x faster than what you have.\u201D", good:false,
+    fb:"Specs with no discovery. You don't know what they need yet, and 'fine isn't fast' sounds like an argument. Mood drops."},
+  ]},
+ {cust:"\u201CHuh. With the modem fee it's more like eighty-five, I guess. But honestly the only annoying thing is my wife's video calls freezing in the evening.\u201D",
+  choices:[
+   {t:"\u201CThat evening freeze is congestion, and it's exactly what fiber fixes. Uploads are as fast as downloads, so her calls stay smooth even at 7 pm, and our price includes the router. No rental fee.\u201D", good:true,
+    fb:"Perfect. You matched the benefit to the exact pain he named, and you used his real number against the fee he just discovered."},
+   {t:"\u201CEighty-five?! You're getting robbed. Let me run through all three of our plans real quick.\u201D", good:false,
+    fb:"Two mistakes: mocking his current choice insults him, and a three-plan menu creates decision fatigue. Pitch one plan that fits."},
+  ]},
+ {cust:"\u201COkay, that freezing thing drives us crazy, not gonna lie. What would switching even involve?\u201D",
+  choices:[
+   {t:"\u201CA one-time professional install that's included. Our techs handle everything and you pick the window. I've got Thursday morning or Saturday afternoon open. Which works better for the two of you?\u201D", good:true,
+    fb:"Textbook close. You answered the question, removed the hassle fear, and asked for the install date with a choice, not a yes/no."},
+   {t:"\u201CIt's pretty easy. Anyway, here's my card. Think it over and give me a call whenever!\u201D", good:false,
+    fb:"You had a buying signal and walked away from it. 'Think it over' converts a fraction of what a scheduled install does."},
+  ]},
+];
+const QUIZ=[
+ {q:"GFiber is a subsidiary of which parent company?", o:["Amazon","Alphabet","AT&T","Comcast"], a:1},
+ {q:"\u201CSymmetrical speeds\u201D means:", o:["Speeds are the same in every room","Upload speed matches download speed","Every plan costs the same","Speeds are the same day and night"], a:1},
+ {q:"Which plan lineup is correct, slowest to fastest?", o:["Core 1 Gig, Home 3 Gig, Edge 8 Gig","Home 1 Gig, Core 3 Gig, Edge 8 Gig","Core 2 Gig, Home 5 Gig, Edge 10 Gig","Basic, Plus, Max"], a:0},
+ {q:"GFiber's contract policy is:", o:["12-month minimum","24-month with early termination fee","No annual contracts on any plan","Contracts only on multi-gig plans"], a:2},
+ {q:"GFiber's base gigabit price has:", o:["Doubled since launch","Stayed the same since 2012","Changed every year","Promo pricing for year one only"], a:1},
+ {q:"Home and Edge plans include which router generation?", o:["Wi-Fi 5","Wi-Fi 6","Wi-Fi 7","Customers must buy their own"], a:2},
+ {q:"Fiber beats cable primarily because it:", o:["Uses stronger copper wiring","Sends data as light through glass with symmetrical speeds","Is wireless","Skips the modem entirely"], a:1},
+ {q:"In the sales arc, what comes immediately before the pitch?", o:["The close","Discovery questions","Handling objections","Leaving a door hanger"], a:1},
+ {q:"Best first response to \u201CI'm under contract\u201D:", o:["Offer to pay their termination fee","Ask when it ends and plan a follow-up; GFiber has no contracts to sign","Tell them contracts are illegal","Move to the next door immediately"], a:1},
+ {q:"When should a new lead be logged in the CRM?", o:["End of the week","Same day, before leaving the street","Only if they seemed interested","After the install"], a:1},
+ {q:"MDU stands for:", o:["Multi-Dwelling Unit","Maximum Data Usage","Managed Digital Utility","Multi-Device User"], a:0},
+ {q:"Inside an apartment building, you should:", o:["Knock on every door, fastest route to volume","Work through the property manager and get permission first","Post flyers in the elevator","Wait in the parking garage"], a:1},
+ {q:"The strongest pitch language focuses on:", o:["Technical specs and gig counts","Benefits tied to what the customer told you","Competitor bashing","Limited-time pressure"], a:1},
+ {q:"GFiber's reliability commitment includes:", o:["A free month after any outage","99.9%+ uptime, with a 25% refund on the month's bill if down more than 45 minutes","Refunds only for business customers","No stated commitment"], a:1},
+ {q:"The strongest close in this program is:", o:["\u201CThink it over and call me.\u201D","\u201CDo you want it or not?\u201D","Offering an install-time choice: \u201Cmornings or afternoons?\u201D","Lowering the price on the spot"], a:2},
+];
+
+// ---------- Rendering ----------
+const stage=document.getElementById('stage');
+const navlist=document.getElementById('navlist');
+
+function pct(){
+  const totalSlides=MODULES.reduce((n,m)=>n+m.slides.length,0);
+  let done=0;
+  for(let i=0;i<S.mod;i++)done+=MODULES[i].slides.length;
+  done+=S.slide;
+  return Math.min(100,Math.round(done/totalSlides*100));
+}
+function renderNav(){
+  navlist.innerHTML=MODULES.map((m,i)=>{
+    const locked=i>0 && !S.completed.includes(i-1) && i!==S.mod;
+    const cls=['navmod', i===S.mod?'active':'', S.completed.includes(i)?'done':'', locked?'locked':''].join(' ');
+    const dot=S.completed.includes(i)?'\u2713':(i+1);
+    return `<button class="${cls}" onclick="goMod(${i})">
+      <span class="dot">${dot}</span><span>${m.title}</span></button>`;
+  }).join('');
+  document.getElementById('fiberfill').style.width=pct()+'%';
+}
+function goMod(i){
+  const locked=i>0 && !S.completed.includes(i-1) && i!==S.mod;
+  if(locked){return;}
+  S.mod=i;S.slide=0;render();
+  document.getElementById('sidenav').classList.remove('open');
+}
+function next(){
+  const m=MODULES[S.mod];
+  if(S.slide < m.slides.length-1){S.slide++;}
+  else{
+    if(!S.completed.includes(S.mod))S.completed.push(S.mod);
+    if(S.mod<MODULES.length-1){S.mod++;S.slide=0;}
+  }
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function back(){
+  if(S.slide>0){S.slide--;}
+  else if(S.mod>0){S.mod--;S.slide=MODULES[S.mod].slides.length-1;}
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function controls(nextLabel, disabled){
+  const first=S.mod===0&&S.slide===0;
+  return `<div class="controls">
+    <button class="btn ghost" onclick="back()" ${first?'style="visibility:hidden"':''}>Back</button>
+    <span class="crumb">Module ${S.mod+1} of ${MODULES.length}</span>
+    <button class="btn primary" id="nextbtn" onclick="next()" ${disabled?'disabled':''}>${nextLabel||'Continue'}</button>
+  </div>`;
+}
+
+function render(){
+  renderNav();
+  const sl=MODULES[S.mod].slides[S.slide];
+  const fn={hero:rHero,content:rContent,mythfact:rMyth,match:rMatch,channels:rChannels,flash:rFlash,scenario:rScenario,checklist:rChecklist,quizintro:rQuizIntro,quiz:rQuiz}[sl.type];
+  stage.innerHTML=fn(sl)+`<p class="note">Demo training concept designed by Naya Roquemore for the GFiber Sales Academy L&amp;D Specialist application. Not an official GFiber product.</p>`;
+}
+
+// ---------- Slide renderers ----------
+function rHero(){
+  return `<div class="slide hero">
+    ${gigiSVG(130)}
+    <h1>Ready to <span class="hl">Sell</span></h1>
+    <p class="sub">Your five-day path from new hire to revenue ready. By Friday you'll pitch GFiber with confidence, handle the toughest objections, and run a clean sale from knock to closed-won.</p>
+    <div class="daymap">
+      <div class="daypill"><b>Day 1</b>Company &amp; fiber foundations</div>
+      <div class="daypill"><b>Day 2</b>Products &amp; channels</div>
+      <div class="daypill"><b>Day 3</b>The sales conversation</div>
+      <div class="daypill"><b>Day 4</b>Tools &amp; process</div>
+      <div class="daypill"><b>Day 5</b>Certification</div>
+    </div>
+    <button class="btn primary" onclick="next()" style="font-size:17px;padding:15px 38px">Start Day 1</button>
+  </div>`;
+}
+function rContent(sl){
+  return `<div class="slide"><div class="eyebrow">${sl.eyebrow}</div><h2>${sl.h}</h2>${sl.body}${controls()}</div>`;
+}
+
+// Myth or Fact
+let mythFlipped=new Set();
+function rMyth(){
+  mythFlipped=new Set();
+  return `<div class="slide"><div class="eyebrow">Module 1 · Knowledge check</div>
+  <h2>Myth or Fact?</h2>
+  <p>Tap each card to make your call, then see the answer. Flip all six to continue.</p>
+  <div class="cardgrid">${MYTHS.map((m,i)=>`
+    <div class="flip" id="mf${i}" onclick="flipMyth(${i})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')flipMyth(${i})">
+      <div class="inner">
+        <div class="face front"><span class="lbl">Myth or fact?</span>${m.q}</div>
+        <div class="face back ${m.a?'fact':'myth'}"><span class="lbl">${m.a?'FACT':'MYTH'}</span>${m.why}</div>
+      </div>
+    </div>`).join('')}</div>
+  ${controls('Finish Module 1', true)}</div>`;
+}
+function flipMyth(i){
+  const el=document.getElementById('mf'+i);
+  el.classList.add('flipped'); mythFlipped.add(i);
+  if(mythFlipped.size===MYTHS.length)document.getElementById('nextbtn').disabled=false;
+}
+
+// Customer-plan match
+let mSel=null, mDone=new Set();
+function rMatch(){
+  mSel=null;mDone=new Set();
+  return `<div class="slide"><div class="eyebrow">Module 2 · Practice</div>
+  <h2>Match the customer to the plan</h2>
+  <p>Tap a customer, then tap the plan you'd recommend. A wrong pairing shakes; a right one locks in green. Match all four to continue.</p>
+  <div class="matchwrap">
+    <div class="matchcol"><h4>Customers</h4>${MATCH.customers.map(c=>`
+      <button class="mitem" id="m_${c.id}" onclick="pickCust('${c.id}')"><b>${c.t}</b>${c.d}</button>`).join('')}</div>
+    <div class="matchcol"><h4>Plans</h4>${MATCH.plans.map(p=>`
+      <button class="mitem" id="m_${p.id}" onclick="pickPlan('${p.id}')"><b>${p.t}</b></button>`).join('')}</div>
+  </div>${controls('Finish Module 2', true)}</div>`;
+}
+function pickCust(id){
+  if(mDone.has(id))return;
+  mSel=id;
+  MATCH.customers.forEach(c=>{const e=document.getElementById('m_'+c.id);if(!mDone.has(c.id))e.classList.toggle('sel',c.id===id);});
+}
+function pickPlan(pid){
+  if(!mSel)return;
+  const plan=MATCH.plans.find(p=>p.id===pid);
+  const cEl=document.getElementById('m_'+mSel), pEl=document.getElementById('m_'+pid);
+  if(plan.fit===mSel){
+    cEl.classList.remove('sel');cEl.classList.add('ok');pEl.classList.add('ok');
+    mDone.add(mSel);mDone.add(pid);mSel=null;
+    if(mDone.size===8)document.getElementById('nextbtn').disabled=false;
+  }else{
+    pEl.classList.add('bad');setTimeout(()=>pEl.classList.remove('bad'),380);
+  }
+}
+
+// Channels
+let chSeen=new Set(['res']);
+function rChannels(){
+  chSeen=new Set(['res']);
+  return `<div class="slide"><div class="eyebrow">Module 3 · Channels</div>
+  <h2>Three channels, three playbooks</h2>
+  <p>You'll flex across residential and business-facing channels as the business needs you. Explore all three to continue.</p>
+  <div class="tabs">${CHANNELS.map((c,i)=>`<button class="tab ${i===0?'active':''} ${c.cls}" id="tab_${c.key}" onclick="showCh('${c.key}')">${c.name}</button>`).join('')}</div>
+  <div id="chbody"></div>
+  ${controls('Finish Module 3', true)}</div>`;
+}
+function showCh(key){
+  chSeen.add(key);
+  CHANNELS.forEach(c=>{const t=document.getElementById('tab_'+c.key);t.classList.toggle('active',c.key===key);});
+  const c=CHANNELS.find(x=>x.key===key);
+  document.getElementById('chbody').innerHTML=`<div class="chpanel">
+    <h3>${c.name}</h3>
+    <p><b>Who you're serving:</b> ${c.who}</p>
+    <p><b>What they care about:</b> ${c.care}</p>
+    <div class="twocol">
+      <div class="dolist"><h5>Do</h5><ul>${c.dos.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+      <div class="dontlist"><h5>Don't</h5><ul>${c.donts.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+    </div></div>`;
+  if(chSeen.size===3)document.getElementById('nextbtn').disabled=false;
+}
+
+// Flashcards
+let flSeen=new Set();
+function rFlash(){
+  flSeen=new Set();
+  return `<div class="slide"><div class="eyebrow">Module 4 · Objection gym</div>
+  <h2>The top 5 objections</h2>
+  <p>Tap a card to reveal a response that acknowledges, answers, and advances. Flip all five to continue. Make these your own; they're frameworks, not scripts.</p>
+  <div class="cardgrid">${FLASH.map((f,i)=>`
+    <div class="flip" id="fl${i}" style="height:200px" onclick="flipFl(${i})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')flipFl(${i})">
+      <div class="inner">
+        <div class="face front"><span class="lbl">Objection ${i+1}</span>${f.o}</div>
+        <div class="face back" style="background:var(--g-blue)">${f.r}</div>
+      </div>
+    </div>`).join('')}</div>
+  ${controls('Continue', true)}</div>`;
+}
+function flipFl(i){
+  document.getElementById('fl'+i).classList.add('flipped');flSeen.add(i);
+  if(flSeen.size===FLASH.length)document.getElementById('nextbtn').disabled=false;
+}
+
+// Branching scenario
+function rScenario(){
+  S.scStep=0;S.mood=1;S.scDone=false;
+  return `<div class="slide"><div class="eyebrow">Module 4 · Simulation</div>
+  <h2>Meet Sam at the door</h2>
+  <p>Sam's street just got GFiber construction. Your choices move his mood meter. Get him to an install.</p>
+  <div class="moodwrap"><span class="lbl">Sam's mood</span><div class="moodbar"><div class="mfill" id="mood" style="width:55%"></div></div></div>
+  <div class="scene">
+    <div class="avatarbox" id="avbox">${avatarSVG(1,'#FBBC04')}<div>Sam</div></div>
+    <div class="convo" id="convo"></div>
+  </div>
+  ${controls('Finish Module 4', true)}</div>`;
+}
+function renderScStep(){
+  const st=SCENARIO[S.scStep];
+  document.getElementById('convo').innerHTML=`
+    <div class="cust-line">${st.cust}</div>
+    ${st.choices.map((c,i)=>`<button class="choice" onclick="chooseSc(${i})">${c.t}</button>`).join('')}
+    <div id="scfb"></div>`;
+}
+function chooseSc(i){
+  const st=SCENARIO[S.scStep], ch=st.choices[i];
+  S.mood=Math.max(0,Math.min(2,S.mood+(ch.good?1:-1)));
+  document.getElementById('mood').style.width=(S.mood===0?15:S.mood===1?55:100)+'%';
+  document.getElementById('avbox').innerHTML=avatarSVG(S.mood,'#FBBC04')+'<div>Sam</div>';
+  const fb=document.getElementById('scfb');
+  fb.innerHTML=`<div class="feedback ${ch.good?'good':'bad'}"><b>${ch.good?'Nice.':'Hmm.'}</b> ${ch.fb}</div>
+    <button class="btn ghost" onclick="advSc(${ch.good?1:0})" style="margin-top:4px">${ch.good?(S.scStep<SCENARIO.length-1?'Sam responds...':'Wrap up'):'Try that beat again'}</button>`;
+  document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+}
+function advSc(good){
+  if(!good){renderScStep();return;}
+  if(S.scStep<SCENARIO.length-1){S.scStep++;renderScStep();}
+  else{
+    S.scDone=true;
+    document.getElementById('convo').innerHTML=`
+      <div class="cust-line">\u201CSaturday afternoon works. Honestly, that was painless.\u201D</div>
+      ${gigiSays("Closed-won! Notice the pattern: <b>discover, match the benefit to the pain, close on a choice.</b> That arc works at every door.")}`;
+    document.getElementById('mood').style.width='100%';
+    document.getElementById('avbox').innerHTML=avatarSVG(2,'#FBBC04')+'<div>Sam</div>';
+    document.getElementById('nextbtn').disabled=false;
+  }
+}
+
+// Checklist
+const CHECKS=[
+ {t:"Log the lead before leaving the street",d:"Address, status, and notes a teammate could pick up cold."},
+ {t:"Record the objection, not just the outcome",d:"\u201CUnder contract until March\u201D is a future sale. \u201CNot interested\u201D is a dead note."},
+ {t:"Schedule the install while you're with the customer",d:"Offer two windows. Verbal commitments without a logged install evaporate."},
+ {t:"Set the install-day expectation",d:"Tell the customer exactly what happens: tech arrives in the window, hard-wires eligible rooms, total time estimate."},
+ {t:"Hand off cleanly to customer experience",d:"Flag anything unusual (gate codes, dogs, access notes) in the record."},
+ {t:"Update conversion status same day",d:"Your pipeline forecast is only as honest as your last update."},
+];
+let ckOn=new Set();
+function rChecklist(){
+  ckOn=new Set();
+  return `<div class="slide"><div class="eyebrow">Module 5 · The clean-sale checklist</div>
+  <h2>Six habits of a clean sale</h2>
+  <p>Tap each habit to commit to it. All six to continue. This is the checklist your future self (and your commission statement) will thank you for.</p>
+  ${CHECKS.map((c,i)=>`<button class="check" id="ck${i}" onclick="tapCk(${i})">
+    <span class="box" id="ckb${i}"></span><span class="t"><b>${c.t}</b><span>${c.d}</span></span></button>`).join('')}
+  ${controls('Finish Module 5', true)}</div>`;
+}
+function tapCk(i){
+  const el=document.getElementById('ck'+i);
+  if(ckOn.has(i)){ckOn.delete(i);el.classList.remove('on');document.getElementById('ckb'+i).textContent='';}
+  else{ckOn.add(i);el.classList.add('on');document.getElementById('ckb'+i).textContent='\u2713';}
+  document.getElementById('nextbtn').disabled=ckOn.size!==CHECKS.length;
+}
+
+// Quiz
+function rQuizIntro(){
+  return `<div class="slide" style="text-align:center">
+    <div class="eyebrow">Module 6 · Certification</div>
+    <h2>The Ready to Sell certification</h2>
+    ${gigiSays("Fifteen questions covering everything from fiber 101 to the close. You need <b>80% (12 of 15)</b> to earn your badge. You've got this.")}
+    <div class="statline" style="justify-content:center">
+      <div class="stat"><b>15</b>questions</div>
+      <div class="stat"><b>80%</b>to pass</div>
+      <div class="stat"><b>&infin;</b>retakes</div>
+    </div>
+    <button class="btn primary" onclick="startQuiz()" style="font-size:16px;padding:14px 34px;margin-top:10px">Begin certification</button>
+    <div class="controls"><button class="btn ghost" onclick="back()">Back</button><span></span><span></span></div>
+  </div>`;
+}
+function startQuiz(){S.quiz={i:0,score:0,answers:[]};S.slide=1;render();}
+function rQuiz(){
+  if(S.quiz.i>=QUIZ.length)return rResult();
+  const q=QUIZ[S.quiz.i];
+  return `<div class="slide">
+    <div class="qbar">${QUIZ.map((_,i)=>{
+      if(i<S.quiz.i)return `<i class="${S.quiz.answers[i]?'hit':'miss'}"></i>`;
+      return `<i class="${i===S.quiz.i?'cur':''}"></i>`;}).join('')}</div>
+    <div class="qcard">
+      <div class="qnum">QUESTION ${S.quiz.i+1} OF ${QUIZ.length}</div>
+      <div class="qtext">${q.q}</div>
+      ${q.o.map((o,i)=>`<button class="qopt" id="q${i}" onclick="answer(${i})">${o}</button>`).join('')}
+      <div id="qfb"></div>
+    </div></div>`;
+}
+function answer(i){
+  const q=QUIZ[S.quiz.i], right=i===q.a;
+  S.quiz.answers.push(right); if(right)S.quiz.score++;
+  document.querySelectorAll('.qopt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.a)b.classList.add('right');
+    else if(j===i)b.classList.add('wrong');
+  });
+  document.getElementById('qfb').innerHTML=`<div class="feedback ${right?'good':'bad'}">${right?'Correct.':'Not quite. The highlighted answer is the one to remember.'}</div>
+    <button class="btn primary" onclick="S.quiz.i++;render();window.scrollTo({top:0,behavior:'smooth'})">${S.quiz.i<QUIZ.length-1?'Next question':'See my results'}</button>`;
+}
+function rResult(){
+  const score=S.quiz.score, pctScore=Math.round(score/QUIZ.length*100), passed=pctScore>=80;
+  if(passed){
+    if(!S.completed.includes(S.mod))S.completed.push(S.mod);
+    setTimeout(confetti,150);
+  }
+  renderNav();
+  return `<div class="slide badgewrap">
+    ${passed?`
+    <div class="badge"><svg viewBox="0 0 200 200" width="190" height="190">
+      <circle cx="100" cy="100" r="92" fill="#4285F4"/>
+      <circle cx="100" cy="100" r="78" fill="#fff"/>
+      <circle cx="100" cy="100" r="70" fill="#E8F0FE"/>
+      <polyline points="48,108 78,90 96,116 124,80 152,98" fill="none" stroke="#FBBC04" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M70 138 L94 158 L134 118" fill="none" stroke="#34A853" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="100" y="52" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="15" fill="#202124">READY TO SELL</text>
+    </svg></div>
+    <h2>Certified. Welcome to the floor.</h2>
+    <div class="score-big">${score}/${QUIZ.length} &middot; ${pctScore}%</div>
+    <p style="margin:14px auto;max-width:54ch">You've completed the GFiber Sales Academy onboarding path. Your 30-day ramp starts now: shadow a senior rep this week, run your first solo doors with your team lead nearby, and bring every weird objection you hear back to the Academy. We'll keep sharpening together.</p>
+    `:`
+    ${gigiSays("So close! You scored <b>"+pctScore+"%</b> and the bar is 80%. Review the modules that tripped you up and run it back. Every great rep certifies; some just take the scenic route.")}
+    <div class="score-big">${score}/${QUIZ.length} &middot; ${pctScore}%</div>
+    `}
+    <div style="margin-top:18px">
+      <button class="btn primary" onclick="startQuiz()">${passed?'Retake for fun':'Retake the certification'}</button>
+      <button class="btn ghost" onclick="goMod(0)" style="margin-left:8px">Back to start</button>
+    </div>
+  </div>`;
+}
+function confetti(){
+  const colors=['#4285F4','#EA4335','#FBBC04','#34A853'];
+  for(let i=0;i<90;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[i%4];
+    c.style.animationDuration=(2.2+Math.random()*1.8)+'s';
+    c.style.animationDelay=(Math.random()*.7)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5200);
+  }
+}
+
+// ---------- Hooks for slides that need post-render setup ----------
+const _render=render;
+render=function(){
+  _render();
+  const sl=MODULES[S.mod].slides[S.slide];
+  if(sl.type==='channels')showCh('res');
+  if(sl.type==='scenario')renderScStep();
+};
+
+// Mobile menu
+document.getElementById('menubtn').addEventListener('click',()=>document.getElementById('sidenav').classList.toggle('open'));
+
+render();
+</script>
+</body>
+</html>
